@@ -1,23 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import { Electron } from './utils/electron';
+import Clipboard from './utils/clipboard';
+import Config from './config';
 
 function App() {
+
+  const [clipboard, setClipboard] = useState('');
+
+  const clipboardChanged = text => {
+    setClipboard(text);
+  };
+
+  useEffect(() => {
+    Electron.globalShortcut.register(Config.showHotkey, () => {
+      Electron.getCurrentWindow().show();
+    });
+
+    Clipboard.subscribe(clipboardChanged);
+
+    return () => {
+      Clipboard.unsubscribe(clipboardChanged)
+    }
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Last copied: {clipboard}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
   );
