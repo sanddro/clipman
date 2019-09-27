@@ -2,7 +2,8 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 
 const electron = require('electron');
-const { app, BrowserWindow, Tray,  Menu } = electron;
+const { app, BrowserWindow, Tray,  Menu, ipcMain } = electron;
+const { showWindowWithoutFlicker } = require('../src/utils/window');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -45,8 +46,15 @@ function createWindow () {
     }, {
       label: 'Toggle Developer Tools',
       accelerator: 'F12',
+
       click() {
         win.toggleDevTools();
+      }
+    }, {
+      label: 'Close',
+      accelerator: 'Escape',
+      click() {
+        win.hide();
       }
     }]
   }]);
@@ -64,13 +72,17 @@ function createWindow () {
     win = null
   });
 
-  win.on('close', function (event) {
+  win.on('close', event => {
     if(!app.isQuiting){
       event.preventDefault();
       win.hide();
     }
 
     return false;
+  });
+
+  win.on('blur', () => {
+    win.hide();
   });
 }
 
@@ -88,7 +100,7 @@ function createTray() {
   tray.setToolTip('Clipman');
 
   tray.on('click', () => {
-    win.show();
+    showWindowWithoutFlicker(win);
   });
 }
 

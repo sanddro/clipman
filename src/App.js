@@ -4,6 +4,7 @@ import { Electron } from './utils/electron';
 import Clipboard from './utils/clipboard';
 import Config from './config';
 import ClipsList from './components/ClipsList';
+import { showWindowWithoutFlicker } from './utils/window';
 
 function App() {
   const [clips, setClips] = useState([]);
@@ -32,12 +33,16 @@ function App() {
 
   useEffect(() => {
     Electron.globalShortcut.register(Config.showHotkey, () => {
-      Electron.getCurrentWindow().show();
+        showWindowWithoutFlicker(Electron.getCurrentWindow());
     });
 
     let savedClips = localStorage.getItem('clips');
     if (savedClips)
       setClips(JSON.parse(savedClips));
+
+    return () => {
+      Electron.globalShortcut.unregister(Config.showHotkey);
+    }
   }, []);
 
   const onClipChosen = clip => {
