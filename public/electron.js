@@ -1,7 +1,8 @@
 const path = require('path');
 const isDev = require('electron-is-dev');
 
-const { app, BrowserWindow, Tray,  Menu, MenuItem } = require('electron');
+const electron = require('electron');
+const { app, BrowserWindow, Tray,  Menu } = electron;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -15,13 +16,22 @@ function init() {
 }
 
 function createWindow () {
+  let display = electron.screen.getPrimaryDisplay();
+  let { width, height } = display.bounds;
+
+  let windowWidth = 350, windowHeight = 500;
   // Create the browser window.
   win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: windowWidth,
+    height: windowHeight,
+    x: width - windowWidth - 10,
+    y: height / 2 - windowHeight / 2,
     webPreferences: {
       nodeIntegration: true
-    }
+    },
+    frame: false,
+    transparent: true,
+    alwaysOnTop: isDev && false,
   });
 
   const menu = Menu.buildFromTemplate([{

@@ -14,7 +14,6 @@ setInterval(() => {
 
 function subscribe(callback) {
   callbacks.push(callback);
-  callback(clipboard);
 }
 
 function unsubscribe(callback) {
@@ -23,7 +22,8 @@ function unsubscribe(callback) {
 
 const Clipboard = {
   subscribe,
-  unsubscribe
+  unsubscribe,
+  ...Electron.clipboard
 };
 
 export default Clipboard;

@@ -1,22 +1,36 @@
-.App {
-  text-align: center;
+.wrapper {
+    background: white;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100vw;
+    height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
+.app {
+    height: 100%;
+    overflow-y: auto;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.clip-item {
+    padding: 5px 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    transition: .1s background;
+    user-select: none;
 }
 
-.App-link {
-  color: #09d3ac;
+.clip-item:hover {
+    background: #ccc;
+}
+
+.clip-item .clip-text {
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.clip-item:last-child {
+    border-bottom: none;
 }

@@ -3,34 +3,53 @@ import './App.css';
 import { Electron } from './utils/electron';
 import Clipboard from './utils/clipboard';
 import Config from './config';
+import ClipsList from './components/ClipsList';
 
 function App() {
+  const [clips, setClips] = useState([]);
 
-  const [clipboard, setClipboard] = useState('');
+  useEffect(() => {
+    const clipboardChanged = text => {
+      const foundIdx = clips.indexOf(text);
+      if (foundIdx !== -1)
+        clips.splice(foundIdx, 1);
 
-  const clipboardChanged = text => {
-    setClipboard(text);
-  };
+      let updatedClips = [text, ...clips];
+
+      if (updatedClips.length > Config.maxClips)
+        updatedClips.splice(Config.maxClips);
+
+      setClips(updatedClips);
+      localStorage.setItem('clips', JSON.stringify(updatedClips));
+    };
+    Clipboard.unsubscribe(clipboardChanged);
+    Clipboard.subscribe(clipboardChanged);
+
+    return () => {
+      Clipboard.unsubscribe(clipboardChanged)
+    }
+  }, [clips]);
 
   useEffect(() => {
     Electron.globalShortcut.register(Config.showHotkey, () => {
       Electron.getCurrentWindow().show();
     });
 
-    Clipboard.subscribe(clipboardChanged);
-
-    return () => {
-      Clipboard.unsubscribe(clipboardChanged)
-    }
+    let savedClips = localStorage.getItem('clips');
+    if (savedClips)
+      setClips(JSON.parse(savedClips));
   }, []);
 
+  const onClipChosen = clip => {
+    Clipboard.writeText(clip);
+    Electron.getCurrentWindow().hide();
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Last copied: {clipboard}
-        </p>
-      </header>
+    <div className="wrapper">
+      <div className="app">
+        <ClipsList clips={clips} onClipChosen={onClipChosen} />
+      </div>
     </div>
   );
 }
