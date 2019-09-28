@@ -6,6 +6,7 @@ const isDev = require('electron-is-dev');
 const electron = require('electron');
 const { app, BrowserWindow, Tray,  Menu, ipcMain } = electron;
 const { showMainWindow, hideMainWindow } = require('../src/utils/window');
+const Config = require('../src/config');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -19,24 +20,18 @@ function init() {
 }
 
 function createWindow () {
-  let display = electron.screen.getPrimaryDisplay();
-  let { width, height } = display.bounds;
-
-  let { mainWindowWidth, mainWindowHeight } = require('../src/config');
+  let { mainWindowWidth, mainWindowHeight } = Config;
   // Create the browser window.
   win = new BrowserWindow({
     width: mainWindowWidth,
     height: mainWindowHeight,
-    x: Math.round(width - mainWindowWidth - 10),
-    y: Math.round(height / 2 - mainWindowHeight / 2),
     webPreferences: {
       nodeIntegration: true
     },
     frame: false,
     skipTaskbar: true,
     resizable: false,
-    show: false,
-    alwaysOnTop: isDev && false,
+    show: false
   });
 
   const menu = Menu.buildFromTemplate([{
@@ -89,10 +84,16 @@ function createWindow () {
     hideMainWindow(win);
   });
 
-  ipcMain.on('paste', () => {
-      ks.sendCombination(['control', 'v']);
+  ipcMain.on('hideAndPaste', () => {
+    hideMainWindow(win);
+    ks.sendCombination(['control', 'v']);
+  });
+
+  ipcMain.on('showMainWindow', () => {
+    showMainWindow(win, electron.screen);
   });
 }
+
 function createTray() {
   tray = new Tray(__dirname + '/favicon.ico');
 
@@ -107,7 +108,7 @@ function createTray() {
   tray.setToolTip('Clipman');
 
   tray.on('click', () => {
-    showMainWindow(win);
+    showMainWindow(win, electron.screen);
   });
 }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ClipItem from './ClipItem';
 
 const ClipsList = ({clips, onClipChosen}) => {
   const [selectedClipIdx, setSelectedClipIdx] = useState(0);
@@ -40,15 +41,11 @@ const ClipsList = ({clips, onClipChosen}) => {
     }
   }, [clips, selectedClipIdx, onClipChosen]);
 
-  return (
-    <div>
+    return (
+    <div className="clip-list">
       <ul>
         {clips.map((clip, idx) =>
-          <li key={idx} className={'clip-item' + (idx === selectedClipIdx ? ' selected' : '')} onClick={() => onClipChosen(clip)}>
-            <div className="clip-text" title={clip}>
-              {clip}
-            </div>
-          </li>
+          <ClipItem key={idx} clip={clip} selected={idx === selectedClipIdx} onClipChosen={() => onClipChosen(clip)} />
         )}
       </ul>
     </div>

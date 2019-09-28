@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import './App.css';
 import Clipboard from './utils/clipboard';
 import Config from './config';
 import ClipsList from './components/ClipsList';
-import { hideMainWindow, showMainWindow } from './utils/window';
 import { Electron, ipcRenderer } from './utils/electron';
+import Search from './components/Search';
 
 function App() {
   const [clips, setClips] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredClips = clips.filter(clip => clip.includes(searchTerm));
+
 
   window.onload = e => {
     Electron.globalShortcut.register(Config.showHotkey, () => {
-      showMainWindow(Electron.getCurrentWindow());
+      ipcRenderer.send('showMainWindow');
     });
   };
 
@@ -43,23 +46,25 @@ function App() {
 
   useEffect(() => {
     let savedClips = localStorage.getItem('clips');
-    if (savedClips)
-      setClips(JSON.parse(savedClips));
-    }, []);
+    if (savedClips) {
+      const parsed = JSON.parse(savedClips);
+      setClips(parsed);
+    }
+  }, []);
 
   const onClipChosen = clip => {
     Clipboard.writeText(clip);
+    ipcRenderer.send('hideAndPaste');
+  };
 
-    hideMainWindow(Electron.getCurrentWindow());
-
-    ipcRenderer.send('paste');
+  const onSearch = term => {
+    setSearchTerm(term);
   };
 
   return (
     <div className="wrapper">
-      <div className="app">
-        <ClipsList clips={clips} onClipChosen={onClipChosen} />
-      </div>
+        <ClipsList clips={filteredClips} onClipChosen={onClipChosen} />
+        <Search onSearch={onSearch}/>
     </div>
   );
 }
