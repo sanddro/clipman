@@ -1,6 +1,8 @@
 const Config = {
+  mainWindowWidth: 300,
+  mainWindowHeight: 390,
   showHotkey: 'CommandOrControl+Q',
-  maxClips: 500
+  maxClips: 500,
 };
 
-export default Config;
+module.exports = Config;

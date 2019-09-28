@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { Electron } from './utils/electron';
 import Clipboard from './utils/clipboard';
 import Config from './config';
 import ClipsList from './components/ClipsList';
-import { showWindowWithoutFlicker } from './utils/window';
+import { hideMainWindow, showMainWindow } from './utils/window';
+import { Electron, ipcRenderer } from './utils/electron';
 
 function App() {
   const [clips, setClips] = useState([]);
+
+  window.onload = e => {
+    Electron.globalShortcut.register(Config.showHotkey, () => {
+      showMainWindow(Electron.getCurrentWindow());
+    });
+  };
+
+  window.onbeforeunload = e => {
+    Electron.globalShortcut.unregister(Config.showHotkey);
+  };
 
   useEffect(() => {
     const clipboardChanged = text => {
@@ -32,22 +42,17 @@ function App() {
   }, [clips]);
 
   useEffect(() => {
-    Electron.globalShortcut.register(Config.showHotkey, () => {
-        showWindowWithoutFlicker(Electron.getCurrentWindow());
-    });
-
     let savedClips = localStorage.getItem('clips');
     if (savedClips)
       setClips(JSON.parse(savedClips));
-
-    return () => {
-      Electron.globalShortcut.unregister(Config.showHotkey);
-    }
-  }, []);
+    }, []);
 
   const onClipChosen = clip => {
     Clipboard.writeText(clip);
-    Electron.getCurrentWindow().hide();
+
+    hideMainWindow(Electron.getCurrentWindow());
+
+    ipcRenderer.send('paste');
   };
 
   return (

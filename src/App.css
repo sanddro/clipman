@@ -1,6 +1,5 @@
 .wrapper {
     background: white;
-    border-radius: 5px;
     border: 1px solid #ccc;
     width: 100vw;
     height: 100vh;
@@ -12,15 +11,17 @@
 }
 
 .clip-item {
-    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 10px;
     font-size: 14px;
     border-bottom: 1px solid #ccc;
     cursor: pointer;
-    transition: .1s background;
     user-select: none;
 }
 
-.clip-item:hover {
+.clip-item.selected {
     background: #ccc;
 }
 

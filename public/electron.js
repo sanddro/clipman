@@ -1,9 +1,11 @@
+const ks = require('node-key-sender');
+
 const path = require('path');
 const isDev = require('electron-is-dev');
 
 const electron = require('electron');
 const { app, BrowserWindow, Tray,  Menu, ipcMain } = electron;
-const { showWindowWithoutFlicker } = require('../src/utils/window');
+const { showMainWindow, hideMainWindow } = require('../src/utils/window');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -20,18 +22,20 @@ function createWindow () {
   let display = electron.screen.getPrimaryDisplay();
   let { width, height } = display.bounds;
 
-  let windowWidth = 350, windowHeight = 500;
+  let { mainWindowWidth, mainWindowHeight } = require('../src/config');
   // Create the browser window.
   win = new BrowserWindow({
-    width: windowWidth,
-    height: windowHeight,
-    x: width - windowWidth - 10,
-    y: height / 2 - windowHeight / 2,
+    width: mainWindowWidth,
+    height: mainWindowHeight,
+    x: Math.round(width - mainWindowWidth - 10),
+    y: Math.round(height / 2 - mainWindowHeight / 2),
     webPreferences: {
       nodeIntegration: true
     },
     frame: false,
-    transparent: true,
+    skipTaskbar: true,
+    resizable: false,
+    show: false,
     alwaysOnTop: isDev && false,
   });
 
@@ -54,7 +58,7 @@ function createWindow () {
       label: 'Close',
       accelerator: 'Escape',
       click() {
-        win.hide();
+        hideMainWindow(win);
       }
     }]
   }]);
@@ -75,17 +79,20 @@ function createWindow () {
   win.on('close', event => {
     if(!app.isQuiting){
       event.preventDefault();
-      win.hide();
+      hideMainWindow(win);
     }
 
     return false;
   });
 
   win.on('blur', () => {
-    win.hide();
+    hideMainWindow(win);
+  });
+
+  ipcMain.on('paste', () => {
+      ks.sendCombination(['control', 'v']);
   });
 }
-
 function createTray() {
   tray = new Tray(__dirname + '/favicon.ico');
 
@@ -100,7 +107,7 @@ function createTray() {
   tray.setToolTip('Clipman');
 
   tray.on('click', () => {
-    showWindowWithoutFlicker(win);
+    showMainWindow(win);
   });
 }
 

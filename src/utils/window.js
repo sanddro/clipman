@@ -1,10 +1,13 @@
-function showWindowWithoutFlicker(win) {
-  if (!win) return;
-  win.setOpacity(0);
+function showMainWindow(win) {
   win.show();
-  setTimeout(() => {
-    win.setOpacity(1)
-  }, 100)
+  win.restore();
+  win.setOpacity(1);
 }
 
-module.exports = { showWindowWithoutFlicker };
+function hideMainWindow(win) {
+  win.setOpacity(0);
+  win.minimize();
+  win.hide();
+}
+
+module.exports = { showMainWindow, hideMainWindow };
