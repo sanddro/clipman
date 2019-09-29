@@ -29,7 +29,13 @@ function setWindowToMousePos(win, screen) {
   if (y + size[1] > bounds.height - Config.bottomDockHeight)
     y = bounds.height - Config.bottomDockHeight - size[1];
 
-  win.setPosition(x, y);
+  // not setPosition, because it for some reason resizes window
+  win.setBounds({
+    width: Config.mainWindowWidth,
+    height: Config.mainWindowHeight,
+    x: x,
+    y: y
+  });
 }
 
 function hideMainWindow(win) {

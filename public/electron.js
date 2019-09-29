@@ -30,7 +30,9 @@ function createWindow () {
     },
     frame: false,
     skipTaskbar: true,
+    fullscreenable: false,
     resizable: false,
+    useContentSize: true,
     show: false
   });
 
