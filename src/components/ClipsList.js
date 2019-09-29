@@ -21,15 +21,12 @@ const ClipsList = ({clips, onClipChosen}) => {
     document.onkeydown = function(event) {
       switch (event.key) {
         case 'ArrowUp':
-          // Up arrow
           setSelectedClipIdx(selectedClipIdx - 1 >= 0 ? selectedClipIdx - 1 : clips.length - 1);
           break;
         case 'ArrowDown':
-          // Down arrow
           setSelectedClipIdx((selectedClipIdx + 1) % clips.length);
           break;
         case 'Enter':
-          // Enter
           onClipChosen(clips[selectedClipIdx]);
           break;
         default:
@@ -43,11 +40,15 @@ const ClipsList = ({clips, onClipChosen}) => {
 
     return (
     <div className="clip-list">
-      <ul>
-        {clips.map((clip, idx) =>
-          <ClipItem key={idx} clip={clip} selected={idx === selectedClipIdx} onClipChosen={() => onClipChosen(clip)} />
-        )}
-      </ul>
+      {clips.length
+        ?
+        <ul>
+          {clips.map((clip, idx) =>
+            <ClipItem key={idx} clip={clip} selected={idx === selectedClipIdx} onClipChosen={() => onClipChosen(clip)}/>
+          )}
+        </ul>
+        : <div className="no-clips">No clips found</div>
+      }
     </div>
   );
 };

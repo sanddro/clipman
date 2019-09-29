@@ -14,10 +14,10 @@
 .clip-item {
     display: flex;
     align-items: center;
-    height: 34px;
+    min-height: 34px;
     padding: 0 10px;
     font-size: 14px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #c7cbd1;
     cursor: pointer;
     user-select: none;
     font-family: Consolas, sans-serif;
@@ -39,9 +39,19 @@
     text-overflow: ellipsis;
 }
 
-.clip-item .clip-text-icon {
+.clip-item .clip-icon {
+    font-size: 16px;
     margin-right: 10px;
-    color: #777;
+    color: #555;
+
+}
+
+.clip-item .clip-icon.image {
+    /*color: #339af0;*/
+}
+
+.clip-item .clip-icon.file {
+    /*color: seagreen;*/
 }
 
 .clip-item .clip-color {
@@ -49,6 +59,20 @@
     height: 15px;
     margin-right: 5px;
     border: 1px solid black;
+}
+
+.clip-item .clip-image {
+    max-height: 80px;
+    max-width: 90%;
+    margin: 5px 5px 5px 0;
+    border-radius: 5px;
+}
+
+.no-clips {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #444;
 }
 
 .search-block {

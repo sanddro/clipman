@@ -5,8 +5,8 @@ const isDev = require('electron-is-dev');
 
 const electron = require('electron');
 const { app, BrowserWindow, Tray,  Menu, ipcMain } = electron;
-const { showMainWindow, hideMainWindow } = require('../src/utils/window');
-const Config = require('../src/config');
+const { showMainWindow, hideMainWindow } = require('./electron/utils/window');
+const Config = require('./electron/config');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -63,7 +63,7 @@ function createWindow () {
   Menu.setApplicationMenu(menu);
 
   // and load the index.html of the app.
-  win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
+  win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`);
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -97,7 +97,7 @@ function createWindow () {
 }
 
 function createTray() {
-  tray = new Tray(__dirname + '/favicon.ico');
+  tray = new Tray(__dirname + '/logo512.png');
 
   const contextMenu = Menu.buildFromTemplate([{
     label: 'Quit',

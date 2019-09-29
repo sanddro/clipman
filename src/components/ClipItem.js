@@ -1,19 +1,20 @@
 import React from 'react';
-import getHex from '../utils/hex';
+import TextItem from './TextItem';
+import ImageItem from './ImageItem';
+import FileItem from './FileItem';
 
 const ClipItem = ({selected, clip, onClipChosen}) => {
-
-  let hex = getHex(clip);
-
   return (
     <li className={'clip-item' + (selected ? ' selected' : '')} onClick={onClipChosen}>
-      <i className="far fa-file-alt clip-text-icon" />
-      {hex &&
-      <i className="clip-color" style={{backgroundColor: '#' + hex}}/>
+      {clip.type === 'text' &&
+        <TextItem value={clip.value}/>
       }
-      <div className="clip-text" title={clip}>
-        {clip}
-      </div>
+      {clip.type === 'image' &&
+        <ImageItem value={clip.value} />
+      }
+      {clip.type === 'file' &&
+        <FileItem value={clip.value} />
+      }
     </li>
   );
 };
