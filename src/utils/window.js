@@ -1,6 +1,7 @@
 const Config = require('../config');
 
 function showMainWindow(win, screen) {
+  // opacity to fix issue when window shows and then moves to cursor
   win.setOpacity(0);
   win.show();
   win.restore();
@@ -10,23 +11,31 @@ function showMainWindow(win, screen) {
 
 function setWindowToMousePos(win, screen) {
   let { x, y } = screen.getCursorScreenPoint();
+
+  // because x and y are not accurate
+  x += 2;
+  y += 2;
+
   let size = win.getContentSize();
 
   const bounds = screen.getPrimaryDisplay().bounds;
 
-
-  if (x + size[0] > bounds.width) {
+  // prevent window go out of screen horizontally
+  if (x + size[0] > bounds.width)
     x = bounds.width - size[0];
-  }
 
-  if (y + size[1] > bounds.height - Config.bottomDockHeight) {
+
+  // prevent window go out of screen vertically
+  if (y + size[1] > bounds.height - Config.bottomDockHeight)
     y = bounds.height - Config.bottomDockHeight - size[1];
-  }
+
   win.setPosition(x, y);
 }
 
 function hideMainWindow(win) {
+  // opacity to remove minimize animation
   win.setOpacity(0);
+  // to return focus to previous place. minimize - windows, hide - linux
   win.minimize();
   win.hide();
 }
