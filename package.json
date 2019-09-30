@@ -17,16 +17,14 @@
     "directories": {
       "buildResources": "assets"
     },
-    "asar": true,
     "asarUnpack": [
-      "node_modules/node-key-sender/**/*"
+      "build/electron/shell-scripts/**/*"
     ]
   },
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
     "electron-is-dev": "^1.1.0",
-    "node-key-sender": "^1.0.11",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-scripts": "3.1.2"
@@ -39,7 +37,8 @@
     "electron-dev": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "yarn build",
-    "electron-pack": "electron-builder -w"
+    "electron-pack": "electron-builder -w",
+    "electron-pack-linux": "electron-builder -l"
   },
   "eslintConfig": {
     "extends": "react-app"

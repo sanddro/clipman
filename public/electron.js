@@ -5,9 +5,8 @@ const electron = require('electron');
 const { app, BrowserWindow, Tray,  Menu, ipcMain } = electron;
 const { showMainWindow, hideMainWindow } = require('./electron/utils/window');
 const Config = require('./electron/config');
-const ks = isDev
-  ? require('node-key-sender')
-  : require(path.join(__dirname, '/../../app.asar.unpacked/node_modules/node-key-sender'));
+
+const { exec } = require('child_process');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -89,7 +88,18 @@ function createWindow () {
 
   ipcMain.on('hideAndPaste', () => {
     hideMainWindow(win);
-    ks.sendCombination(['control', 'v']);
+    if (process.platform !== 'darwin') {
+      setTimeout(() => {
+        let scriptLocation = isDev
+          ? `${__dirname}/electron/shell-scripts`
+          : path.join(__dirname, '/../../app.asar.unpacked/build/electron/shell-scripts');
+        exec(`wscript ${scriptLocation}/paste.vbs`);
+      }, 100);
+    } else {
+      setTimeout(() => {
+        exec('xdotool key ctrl+v');
+      }, 100);
+    }
   });
 
   ipcMain.on('showMainWindow', () => {
