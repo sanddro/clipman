@@ -2,7 +2,7 @@ import React from 'react';
 
 const FileItem = ({value}) => {
 
-  const filePath = process.platform !== 'darwin'
+  const filePath = process.platform === 'win32'
     ? value.replace(new RegExp(String.fromCharCode(0), 'g'), '')
     : value.replace('file://', '');
 

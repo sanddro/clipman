@@ -88,7 +88,7 @@ function createWindow () {
 
   ipcMain.on('hideAndPaste', () => {
     hideMainWindow(win);
-    if (process.platform !== 'darwin') {
+    if (process.platform === 'win32') {
       setTimeout(() => {
         let scriptLocation = isDev
           ? `${__dirname}/electron/shell-scripts`

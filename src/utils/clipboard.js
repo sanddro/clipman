@@ -17,7 +17,7 @@ function clipBoardChanged(newClipboard) {
 }
 
 function readClipboard() {
-  let rawPath = process.platform !== 'darwin'
+  let rawPath = process.platform === 'win32'
     ? Electron.clipboard.read('FileNameW')
     : Electron.clipboard.read('public.file-url');
 
@@ -49,7 +49,7 @@ function writeToClipboard(clip) {
     Electron.clipboard.writeImage(Electron.nativeImage.createFromDataURL(clip.value));
   else if (clip.type === 'file') {
     Electron.clipboard.writeBuffer(
-      process.platform !== 'darwin' ? 'FileNameW' : 'public.file-url',
+      process.platform === 'win32' ? 'FileNameW' : 'public.file-url',
       Buffer.from(clip.value, 'utf8'));
   }
 }
