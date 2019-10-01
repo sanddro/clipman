@@ -14,6 +14,8 @@ let win;
 
 let tray;
 
+let pasteTimeout;
+
 function init() {
   createWindow();
   createTray();
@@ -89,16 +91,16 @@ function createWindow () {
   ipcMain.on('hideAndPaste', () => {
     hideMainWindow(win);
     if (process.platform === 'win32') {
-      setTimeout(() => {
+      pasteTimeout = setTimeout(() => {
         let scriptLocation = isDev
           ? `${__dirname}/electron/shell-scripts`
           : path.join(__dirname, '/../../app.asar.unpacked/build/electron/shell-scripts');
         exec(`wscript ${scriptLocation}/paste.vbs`);
       }, 100);
     } else {
-      setTimeout(() => {
+      pasteTimeout = setTimeout(() => {
         exec('xdotool key ctrl+v');
-      }, 100);
+      }, 300);
     }
   });
 
