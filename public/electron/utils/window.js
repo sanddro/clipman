@@ -18,16 +18,22 @@ function setWindowToMousePos(win, screen) {
 
   let size = win.getContentSize();
 
-  const bounds = screen.getPrimaryDisplay().bounds;
+  let screensWidth = 0;
+  let screensHeight = 0;
+
+  for (const display of screen.getAllDisplays()) {
+    screensWidth = Math.max(display.workArea.x + display.workArea.width, screensWidth);
+    screensHeight = Math.max(display.workArea.y + display.workArea.height, screensHeight);
+  }
 
   // prevent window go out of screen horizontally
-  if (x + size[0] > bounds.width)
-    x = bounds.width - size[0];
+  if (x + size[0] > screensWidth)
+    x = screensWidth - size[0];
 
 
   // prevent window go out of screen vertically
-  if (y + size[1] > bounds.height - Config.bottomDockHeight)
-    y = bounds.height - Config.bottomDockHeight - size[1];
+  if (y + size[1] > screensHeight)
+    y = screensHeight - size[1];
 
   // not setPosition, because it for some reason resizes window
   win.setBounds({
