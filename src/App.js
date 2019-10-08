@@ -66,6 +66,7 @@ function App() {
   }, []);
 
   const onClipChosen = clip => {
+    setSearchTerm('');
     Clipboard.writeToClipboard(clip);
     ipcRenderer.send('hideAndPaste');
   };
@@ -77,7 +78,7 @@ function App() {
   return (
     <div className="wrapper">
         <ClipsList clips={filteredClips} onClipChosen={onClipChosen} />
-        <Search onSearch={onSearch}/>
+        <Search onSearch={onSearch} searchTerm={searchTerm}/>
     </div>
   );
 }
