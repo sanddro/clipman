@@ -1,6 +1,12 @@
+import { ipcRenderer } from './utils/electron';
+
 const Config = {
-  showHotkey: 'CommandOrControl+Q',
-  maxClips: 500,
+  getConfig() {
+    return ipcRenderer.sendSync('getConfig');
+  },
+  setConfig(changes) {
+    return ipcRenderer.sendSync('changeConfig', changes);
+  }
 };
 
 export default Config;

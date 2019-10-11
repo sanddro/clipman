@@ -106,3 +106,79 @@
     color: #777;
     z-index: 2;
 }
+
+.settings {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-wrapper {
+    flex: 1;
+}
+
+.setting-item {
+    margin: 20px;
+}
+
+.setting-label {
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.setting-block {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+}
+
+.setting-block .setting-icon {
+    margin-right: 10px;
+    color: #555;
+}
+
+.inp {
+    outline: none;
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding-left: 5px;
+    font-size: 12px;
+}
+
+.setting-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 15px 20px;
+}
+
+.setting-button {
+    margin-right: 5px;
+    background: #6c757d;
+    outline: none;
+    border: none;
+    color: white;
+    border-radius: 3px;
+    padding: 5px 15px;
+    cursor: pointer;
+    transition: .1s background;
+}
+
+.setting-button:hover {
+    background: #5a6268;
+}
+
+.setting-button.blue {
+    background: #2358c8;
+}
+
+.setting-button.blue:hover {
+    background: #2346c8;
+}

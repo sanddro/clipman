@@ -37,8 +37,8 @@ function setWindowToMousePos(win, screen) {
 
   // not setPosition, because it for some reason resizes window
   win.setBounds({
-    width: Config.mainWindowWidth,
-    height: Config.mainWindowHeight,
+    width: Config.getConfig().mainWindowWidth,
+    height: Config.getConfig().mainWindowHeight,
     x: x,
     y: y
   });

@@ -2,7 +2,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 
 const electron = require('electron');
-const { app, BrowserWindow, Tray,  Menu, ipcMain } = electron;
+const { app, BrowserWindow, Tray, Menu, ipcMain } = electron;
 const { showMainWindow, hideMainWindow } = require('./electron/utils/window');
 const Config = require('./electron/config');
 
@@ -11,6 +11,7 @@ const { exec } = require('child_process');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let settingsWin;
 
 let tray;
 
@@ -22,7 +23,7 @@ function init() {
 }
 
 function createWindow () {
-  let { mainWindowWidth, mainWindowHeight } = Config;
+  let { mainWindowWidth, mainWindowHeight } = Config.getConfig();
   // Create the browser window.
   win = new BrowserWindow({
     width: mainWindowWidth,
@@ -44,7 +45,7 @@ function createWindow () {
       label: 'Reload',
       accelerator: 'CommandOrControl+R',
       click() {
-        win.reload()
+        win.reload();
       }
     }, {
       label: 'Toggle Developer Tools',
@@ -67,16 +68,21 @@ function createWindow () {
   // and load the index.html of the app.
   win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`);
 
+  electron.globalShortcut.register(Config.getConfig().showHotkey, () => {
+    showMainWindow(win, electron.screen);
+  });
+
   // Emitted when the window is closed.
   win.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    win = null
+    electron.globalShortcut.unregister(Config.getConfig().showHotkey);
+    win = null;
   });
 
   win.on('close', event => {
-    if(!app.isQuiting){
+    if (!app.isQuiting) {
       event.preventDefault();
       hideMainWindow(win);
     }
@@ -89,7 +95,6 @@ function createWindow () {
   });
 
   ipcMain.on('hideAndPaste', () => {
-    hideMainWindow(win);
     if (process.platform === 'win32') {
       pasteTimeout = setTimeout(() => {
         let scriptLocation = isDev
@@ -102,10 +107,21 @@ function createWindow () {
         exec('xdotool key ctrl+v');
       }, 300);
     }
+    hideMainWindow(win);
   });
 
-  ipcMain.on('showMainWindow', () => {
-    showMainWindow(win, electron.screen);
+  ipcMain.on('getConfig', (event, args) => {
+    event.returnValue = Config.getConfig();
+  });
+
+  ipcMain.on('changeConfig', (event, args) => {
+    electron.globalShortcut.unregister(Config.getConfig().showHotkey);
+    Config.setConfig(args);
+    electron.globalShortcut.register(Config.getConfig().showHotkey, () => {
+      showMainWindow(win, electron.screen);
+    });
+
+    event.returnValue = Config.getConfig();
   });
 }
 
@@ -113,6 +129,15 @@ function createTray() {
   tray = new Tray(__dirname + '/logo512.png');
 
   const contextMenu = Menu.buildFromTemplate([{
+    label: 'Settings',
+    click() {
+      if (settingsWin) {
+        settingsWin.show();
+        return;
+      }
+      createSettingsWindow();
+    }
+  }, {
     label: 'Quit',
     click() {
       app.isQuiting = true;
@@ -124,6 +149,28 @@ function createTray() {
 
   tray.on('click', () => {
     showMainWindow(win, electron.screen);
+  });
+}
+
+function createSettingsWindow() {
+  settingsWin = new BrowserWindow({
+    title: 'Settings',
+    width: Config.getConfig().settingsWidthWidth,
+    height: Config.getConfig().settingsWindowHeight,
+    webPreferences: {
+      nodeIntegration: true
+    },
+    fullscreenable: false,
+    resizable: false,
+    useContentSize: true,
+    show: true
+  });
+  !isDev && settingsWin.setMenu(null);
+
+  settingsWin.loadURL((isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`) + '#/settings');
+
+  settingsWin.on('closed', () => {
+    settingsWin = null;
   });
 }
 
