@@ -7,7 +7,7 @@
     "email": "jikiasandro@gmail.com"
   },
   "build": {
-    "appId": "com.clipman.clipman",
+    "appId": "com.clipman.Clipman",
     "productName": "Clipman",
     "copyright": "Copyright © 2019 Sandro Jikia",
     "files": [

@@ -2,7 +2,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 
 const electron = require('electron');
-const { app, BrowserWindow, Tray, Menu, ipcMain } = electron;
+const { app, BrowserWindow, Tray, Menu, ipcMain, Notification } = electron;
 const { showMainWindow, hideMainWindow } = require('./electron/utils/window');
 const Config = require('./electron/config');
 
@@ -16,6 +16,25 @@ let settingsWin;
 let tray;
 
 let pasteTimeout;
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.focus()
+    }
+  });
+
+  // This method will be called when Electron has finished
+  // initialization and is ready to create browser windows.
+  // Some APIs can only be used after this event occurs.
+  app.on('ready', init);
+}
 
 function init() {
   createWindow();
@@ -67,6 +86,15 @@ function createWindow () {
 
   // and load the index.html of the app.
   win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`);
+
+  if (Notification.isSupported()) {
+    let not = new Notification({
+      title: 'Clipman',
+      body: 'Clipman is running minimized in tray.',
+      icon: __dirname + '/logo512.png'
+    });
+    not.show();
+  }
 
   electron.globalShortcut.register(Config.getConfig().showHotkey, () => {
     showMainWindow(win, electron.screen);
@@ -173,8 +201,3 @@ function createSettingsWindow() {
     settingsWin = null;
   });
 }
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', init);
