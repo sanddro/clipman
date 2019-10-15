@@ -1,5 +1,6 @@
-const {LocalStorage} = require('node-localstorage');
-const localStorage = new LocalStorage('./config');
+const Store = require('electron-store');
+
+const store = new Store();
 
 const defaultConfig = {
   mainWindowWidth: 300,
@@ -10,21 +11,17 @@ const defaultConfig = {
   maxClips: 500,
 };
 
-
+if (!store.has('config'))
+  store.set('config', defaultConfig);
 
 const Config = {
   getConfig() {
-    let cfg = JSON.parse(localStorage.getItem('config'));
-    if (!cfg) {
-      cfg = defaultConfig;
-      localStorage.setItem('config', JSON.stringify(cfg));
-    }
-    return cfg;
+    return store.get('config');
   },
   setConfig(changes) {
     let cfg = this.getConfig();
     cfg = {...cfg, ...changes};
-    localStorage.setItem('config', JSON.stringify(cfg));
+    store.set('config', cfg);
     return cfg;
   }
 };

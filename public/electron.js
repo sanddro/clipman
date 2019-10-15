@@ -138,18 +138,11 @@ function createWindow () {
     hideMainWindow(win);
   });
 
-  ipcMain.on('getConfig', (event, args) => {
-    event.returnValue = Config.getConfig();
-  });
-
-  ipcMain.on('changeConfig', (event, args) => {
-    electron.globalShortcut.unregister(Config.getConfig().showHotkey);
-    Config.setConfig(args);
-    electron.globalShortcut.register(Config.getConfig().showHotkey, () => {
+  ipcMain.on('changeHotkey', (event, {oldValue, newValue}) => {
+    electron.globalShortcut.unregister(oldValue);
+    electron.globalShortcut.register(newValue, () => {
       showMainWindow(win, electron.screen);
     });
-
-    event.returnValue = Config.getConfig();
   });
 }
 

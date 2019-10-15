@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Config from '../config';
-import { Electron } from '../utils/electron';
+import { Electron, ipcRenderer } from '../utils/electron';
 
 const Settings = () => {
   const [keyCombination, setKeyCombination] = useState('');
@@ -51,6 +51,8 @@ const Settings = () => {
   const onSave = () => {
     if (maxClipsNumber > 0 && maxClipsNumber < 2001)
       Config.setConfig({maxClips: maxClipsNumber});
+
+    ipcRenderer.send('changeHotkey', { oldValue: Config.getConfig().showHotkey, newValue: keyCombination });
 
     Config.setConfig({showHotkey: keyCombination});
 

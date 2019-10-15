@@ -1,11 +1,16 @@
-import { ipcRenderer } from './utils/electron';
+import Store from 'electron-store';
+
+const store = new Store();
 
 const Config = {
   getConfig() {
-    return ipcRenderer.sendSync('getConfig');
+    return store.get('config');
   },
   setConfig(changes) {
-    return ipcRenderer.sendSync('changeConfig', changes);
+    let cfg = this.getConfig();
+    cfg = {...cfg, ...changes};
+    store.set('config', cfg);
+    return cfg;
   }
 };
 
