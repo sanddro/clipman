@@ -65,10 +65,14 @@ function App() {
     setSearchTerm(term);
   };
 
+  const onSettingsClick = () => {
+    ipcRenderer.send('openSettings');
+  };
+
   return (
     <div className="wrapper">
       <ClipsList clips={filteredClips} onClipChosen={onClipChosen} />
-      <Search onSearch={onSearch} searchTerm={searchTerm}/>
+      <Search onSearch={onSearch} searchTerm={searchTerm} onSettingsClick={onSettingsClick}/>
     </div>
 );
 }

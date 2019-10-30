@@ -144,6 +144,10 @@ function createWindow () {
       showMainWindow(win, electron.screen);
     });
   });
+
+  ipcMain.on('openSettings', () => {
+    createSettingsWindow();
+  });
 }
 
 function createTray() {

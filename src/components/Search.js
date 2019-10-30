@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Search = ({onSearch, searchTerm}) => {
+const Search = ({onSearch, searchTerm, onSettingsClick}) => {
 
   return (
     <div className="search-block">
@@ -11,6 +11,9 @@ const Search = ({onSearch, searchTerm}) => {
                onChange={e => onSearch(e.target.value)}
                onBlur={e => e.target.focus()}
         />
+        <div className="settings-btn" onClick={onSettingsClick}>
+          <i className="fa fa-cog" />
+        </div>
       </div>
     </div>
   );

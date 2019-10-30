@@ -32,13 +32,16 @@
     "react-scripts": "3.1.2"
   },
   "scripts": {
-    "start": "rescripts start",
-    "build": "rescripts build",
-    "test": "rescripts test",
-    "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "yarn electron-dev",
+    "build": "yarn electron-pack",
+    "build-linux": "yarn electron-pack-linux",
+    "react-start": "rescripts start",
+    "react-build": "rescripts build",
+    "react-test": "rescripts test",
+    "react-eject": "react-scripts eject",
+    "electron-dev": "concurrently \"yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "postinstall": "electron-builder install-app-deps",
-    "preelectron-pack": "yarn build",
+    "preelectron-pack": "yarn react-build",
     "electron-pack": "electron-builder -w",
     "electron-pack-linux": "electron-builder -l"
   },
