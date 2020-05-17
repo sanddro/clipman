@@ -1,6 +1,11 @@
 # Clipman
 Simple clipboard manager build with web technologies - React + Electron.
 
+[Download installer from the releases](https://github.com/sanddro/clipman/releases).
+
+## Usage
+Default hotkey to open main window is **Ctrl+Q**. Also it's possible to change it in the settings.
+
 ## Run
 ```
 yarn install
@@ -18,9 +23,6 @@ Linux:
 ```
 yarn build-linux
 ```
-
-## Usage
-Default hotkey to open main window is **Ctrl+Q**. Also it's possible to change it in the settings.
 
 ## Linux Prerequisites
 On **Linux** make sure to install xdotool, otherwise auto paste won't work: 
