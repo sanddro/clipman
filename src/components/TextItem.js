@@ -9,7 +9,7 @@ const TextItem = ({value}) => {
       {hex &&
       <i className="clip-color" style={{backgroundColor: '#' + hex}}/>
       }
-      <div className="clip-text" title={value.length > 30 && value}>
+      <div className="clip-text" title={value.length > 30 ? value : ''}>
         {value}
       </div>
     </>

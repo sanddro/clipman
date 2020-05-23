@@ -1,61 +1,31 @@
-import { Electron } from './electron';
-
-let clipboard = readClipboard();
+import { ipcRenderer } from './electron';
 
 let callbacks = [];
 
-setInterval(() => {
-  let currClipboard = readClipboard();
-  if (clipBoardChanged(currClipboard)) {
-    callbacks.forEach(cb => cb(currClipboard));
-    clipboard = currClipboard
-  }
-}, 20);
+let clips = [];
 
-function clipBoardChanged(newClipboard) {
-  return clipboard.type !== newClipboard.type || clipboard.value !== newClipboard.value;
-}
-
-function readClipboard() {
-  let rawPath = process.platform === 'win32'
-    ? Electron.clipboard.read('FileNameW')
-    : Electron.clipboard.read('public.file-url');
-
-  if (rawPath) {
-    return {
-      type: 'file',
-      value: rawPath
-    }
-  }
-
-  let image = Electron.clipboard.readImage();
-  if (!image.isEmpty()) {
-    return {
-      type: 'image',
-      value: image.toDataURL()
-    }
-  }
-
-  return {
-    type: 'text',
-    value: Electron.clipboard.readText()
+let savedClips = localStorage.getItem('clips');
+if (savedClips) {
+  try {
+    const parsed = JSON.parse(savedClips);
+    clips = parsed;
+  } catch (e) {
+    console.error('Could not parse clips from localStorage');
   }
 }
 
-function writeToClipboard(clip) {
-  if (clip.type === 'text')
-    Electron.clipboard.writeText(clip.value);
-  else if (clip.type === 'image')
-    Electron.clipboard.writeImage(Electron.nativeImage.createFromDataURL(clip.value));
-  else if (clip.type === 'file') {
-    Electron.clipboard.writeBuffer(
-      process.platform === 'win32' ? 'FileNameW' : 'public.file-url',
-      Buffer.from(clip.value, 'utf8'));
+ipcRenderer.on('clipsChanged', (event, newClips) => {
+  if (newClips) {
+    clips = newClips;
+    localStorage.setItem('clips', JSON.stringify(clips));
+    callbacks.forEach(cb => cb(clips));
   }
-}
+});
+
 
 function subscribe(callback) {
   callbacks.push(callback);
+  callback(clips);
 }
 
 function unsubscribe(callback) {
@@ -65,9 +35,6 @@ function unsubscribe(callback) {
 const Clipboard = {
   subscribe,
   unsubscribe,
-  readClipboard,
-  writeToClipboard,
-  ...Electron.clipboard
 };
 
 export default Clipboard;

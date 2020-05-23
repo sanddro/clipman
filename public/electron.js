@@ -8,6 +8,8 @@ const Config = require('./electron/config');
 
 const { exec } = require('child_process');
 
+const Clipboard = require('./electron/utils/clipboard');
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -85,7 +87,9 @@ function createWindow () {
   Menu.setApplicationMenu(menu);
 
   // and load the index.html of the app.
-  win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`);
+  win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`).then(() => {
+    Clipboard.startListening(win).then();
+  });
 
   if (Notification.isSupported()) {
     let not = new Notification({
@@ -106,6 +110,7 @@ function createWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     electron.globalShortcut.unregister(Config.getConfig().showHotkey);
+    Clipboard.stopListening();
     win = null;
   });
 
@@ -122,7 +127,9 @@ function createWindow () {
     hideMainWindow(win);
   });
 
-  ipcMain.on('hideAndPaste', () => {
+  ipcMain.on('chooseClip', (event, clip) => {
+    Clipboard.writeToClipboard(clip);
+
     if (process.platform === 'win32') {
       pasteTimeout = setTimeout(() => {
         let scriptLocation = isDev

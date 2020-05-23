@@ -18,26 +18,8 @@ function App() {
   });
 
   useEffect(() => {
-    const findClipIdx = clip => {
-      for (let i = 0; i < clips.length; i++)
-        if (clips[i].type === clip.type && clips[i].value === clip.value)
-          return i;
-
-      return -1;
-    };
-
-    const clipboardChanged = newClip => {
-      const foundIdx = findClipIdx(newClip);
-      if (foundIdx !== -1)
-        clips.splice(foundIdx, 1);
-
-      let updatedClips = [newClip, ...clips];
-
-      if (updatedClips.length > Config.getConfig().maxClips)
-        updatedClips.splice(Config.getConfig().maxClips);
-
-      setClips(updatedClips);
-      localStorage.setItem('clips', JSON.stringify(updatedClips));
+    const clipboardChanged = clips => {
+      setClips(clips);
     };
     Clipboard.unsubscribe(clipboardChanged);
     Clipboard.subscribe(clipboardChanged);
@@ -45,20 +27,11 @@ function App() {
     return () => {
       Clipboard.unsubscribe(clipboardChanged)
     }
-  }, [clips]);
-
-  useEffect(() => {
-    let savedClips = localStorage.getItem('clips');
-    if (savedClips) {
-      const parsed = JSON.parse(savedClips);
-      setClips(parsed);
-    }
   }, []);
 
   const onClipChosen = clip => {
     setSearchTerm('');
-    Clipboard.writeToClipboard(clip);
-    ipcRenderer.send('hideAndPaste');
+    ipcRenderer.send('chooseClip', clip);
   };
 
   const onSearch = term => {
