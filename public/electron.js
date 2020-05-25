@@ -94,7 +94,7 @@ function createWindow () {
   if (Notification.isSupported()) {
     let not = new Notification({
       title: 'Clipman',
-      body: 'Clipman is running minimized in tray.',
+      body: `Clipman is running minimized in tray. Press ${Config.getConfig().showHotkey.replace('CommandOrControl', 'Ctrl')} to open.`,
       icon: __dirname + '/logo512.png'
     });
     not.show();
