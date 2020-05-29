@@ -1,6 +1,8 @@
 # Clipman
 Simple clipboard manager build with web technologies - React + Electron.
 
+![clipman](https://user-images.githubusercontent.com/18439751/83306804-50fc9e80-a214-11ea-9f29-19c22e3876b8.png)
+
 [Download installer from the releases](https://github.com/sanddro/clipman/releases).
 
 ## Usage
