@@ -4,14 +4,17 @@ let callbacks = [];
 
 let clips = [];
 
-let savedClips = localStorage.getItem('clips');
-if (savedClips) {
-  try {
-    const parsed = JSON.parse(savedClips);
-    clips = parsed;
-  } catch (e) {
-    console.error('Could not parse clips from localStorage');
+function getSavedClips() {
+  let savedClips = localStorage.getItem('clips');
+  if (savedClips) {
+    try {
+      const parsed = JSON.parse(savedClips);
+      clips = parsed;
+    } catch (e) {
+      console.error('Could not parse clips from localStorage');
+    }
   }
+  return clips;
 }
 
 ipcRenderer.on('clipsChanged', (event, newClips) => {
@@ -35,6 +38,7 @@ function unsubscribe(callback) {
 const Clipboard = {
   subscribe,
   unsubscribe,
+  getSavedClips
 };
 
 export default Clipboard;

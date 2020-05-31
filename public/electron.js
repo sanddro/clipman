@@ -14,6 +14,7 @@ const Clipboard = require('./electron/utils/clipboard');
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 let settingsWin;
+let not;
 
 let tray;
 
@@ -40,7 +41,6 @@ if (!gotTheLock) {
 
 function init() {
   createWindow();
-  createTray();
 }
 
 function createWindow () {
@@ -60,9 +60,16 @@ function createWindow () {
     show: false
   });
 
-  const menu = Menu.buildFromTemplate([{
-    label: 'View',
-    submenu: [{
+  let submenu = [{
+    label: 'Close',
+    accelerator: 'Escape',
+    click() {
+      hideMainWindow(win);
+    }
+  }];
+
+  if (isDev) {
+    submenu = [...submenu, {
       label: 'Reload',
       accelerator: 'CommandOrControl+R',
       click() {
@@ -75,33 +82,36 @@ function createWindow () {
       click() {
         win.toggleDevTools();
       }
-    }, {
-      label: 'Close',
-      accelerator: 'Escape',
-      click() {
-        hideMainWindow(win);
-      }
-    }]
+    }];
+  }
+
+  const menu = Menu.buildFromTemplate([{
+    label: 'View',
+    submenu,
   }]);
 
   Menu.setApplicationMenu(menu);
 
   // and load the index.html of the app.
-  win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`).then(() => {
-    Clipboard.startListening(win).then();
-  });
+  win.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '/index.html')}`).then(async () => {
+    await Clipboard.startListening(win);
 
-  if (Notification.isSupported()) {
-    let not = new Notification({
-      title: 'Clipman',
-      body: `Clipman is running minimized in tray. Press ${Config.getConfig().showHotkey.replace('CommandOrControl', 'Ctrl')} to open.`,
-      icon: __dirname + '/logo512.png'
+    electron.globalShortcut.register(Config.getConfig().showHotkey, () => {
+      showMainWindow(win, electron.screen);
     });
-    not.show();
-  }
 
-  electron.globalShortcut.register(Config.getConfig().showHotkey, () => {
-    showMainWindow(win, electron.screen);
+    createTray();
+
+    if (Notification.isSupported()) {
+      not = new Notification({
+        title: 'Clipman',
+        body: `Clipman is running minimized in tray. Press ${Config.getConfig().showHotkey.replace('CommandOrControl', 'Ctrl')} to open.`,
+        icon: __dirname + '/logo512.png'
+      });
+      not.show();
+    }
+
+
   });
 
   // Emitted when the window is closed.

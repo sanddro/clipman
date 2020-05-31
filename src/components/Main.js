@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Clipboard from '../utils/clipboard';
-import Config from '../config';
 import { ipcRenderer } from '../utils/electron';
 import ClipsList from './ClipsList';
 import Search from './Search';
 
 function App() {
-  const [clips, setClips] = useState([]);
+  const [clips, setClips] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredClips = clips.filter(clip => {
+  const filteredClips = clips && clips.filter(clip => {
     // disable files temporarily until write to clipboard works
     // if (clip.type === 'file') return false;
     if (searchTerm === '') return true;
@@ -18,6 +17,8 @@ function App() {
   });
 
   useEffect(() => {
+    setClips(Clipboard.getSavedClips());
+
     const clipboardChanged = clips => {
       setClips(clips);
     };

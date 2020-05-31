@@ -17,7 +17,10 @@ async function startListening(mainWindow) {
       console.error('Could not parse clips from localStorage');
     }
   }
+  listen(mainWindow).then();
+}
 
+async function listen(mainWindow) {
   running = true;
 
   while (running) {
