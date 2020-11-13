@@ -2974,6 +2974,11 @@ cli-width@^2.0.0:
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-2.2.0.tgz#ff19ede8a9a5e579324147b0c11f0fbcbabed639"
   integrity sha1-/xnt6Kml5XkyQUewwR8PvLq+1jk=
 
+clipboard-event@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/clipboard-event/-/clipboard-event-1.0.1.tgz#b15cf9b1303f4acd141dc7ee41ac802111f064d2"
+  integrity sha512-K8DbUOS2yoSIDQmv/fpd/eutoQcKiEsqtQNDacE39WgAivozVHWJCV94fx7NDpvUm1Cb4vxkeqHDoBzX4aDWVQ==
+
 cliui@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/cliui/-/cliui-4.1.0.tgz#348422dbe82d800b3022eef4f6ac10bf2e4d1b49"

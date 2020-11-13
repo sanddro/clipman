@@ -1,11 +1,10 @@
 const Electron = require('electron');
 const Config = require('../config');
+const clipboardListener = require('clipboard-event');
 
 let clipboard = readClipboard();
 
 let clips = [];
-
-let running = false;
 
 async function startListening(mainWindow) {
   let savedClips = await mainWindow.webContents.executeJavaScript('localStorage.getItem("clips");', true);
@@ -21,9 +20,8 @@ async function startListening(mainWindow) {
 }
 
 async function listen(mainWindow) {
-  running = true;
-
-  while (running) {
+  clipboardListener.startListening();
+  clipboardListener.on('change', () => {
     let currClip = readClipboard();
     if (clipBoardChanged(currClip)) {
       const foundIdx = findClipIdx(currClip);
@@ -40,16 +38,11 @@ async function listen(mainWindow) {
 
       clipboard = currClip;
     }
-    await sleep(20);
-  }
+  });
 }
 
 function stopListening() {
-  running = false;
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  clipboardListener.stopListening();
 }
 
 const findClipIdx = clip => {

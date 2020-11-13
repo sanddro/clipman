@@ -24,6 +24,7 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
+    "clipboard-event": "^1.0.1",
     "electron-is-dev": "^1.1.0",
     "electron-store": "^5.0.0",
     "react": "^16.9.0",

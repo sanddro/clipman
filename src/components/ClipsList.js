@@ -41,7 +41,7 @@ const ClipsList = ({clips, onClipChosen}) => {
 
   if (!clips || !clips.length)
     return <div className="clip-list">
-      <div className="no-clips">{clips? 'No clips found' : 'Loading...'}</div>;
+      <div className="no-clips">{clips? 'No clips found' : 'Loading...'}</div>
     </div>;
 
   return (
