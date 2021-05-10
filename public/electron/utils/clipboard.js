@@ -2,11 +2,12 @@ const Electron = require('electron');
 const Config = require('../config');
 const clipboardListener = require('clipboard-event');
 
-let clipboard = readClipboard();
+let clipboard = null;
 
 let clips = [];
 
 async function startListening(mainWindow) {
+  clipboard = readClipboard();
   let savedClips = await mainWindow.webContents.executeJavaScript('localStorage.getItem("clips");', true);
   if (savedClips) {
     try {
